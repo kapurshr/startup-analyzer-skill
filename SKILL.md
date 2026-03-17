@@ -51,6 +51,13 @@ Agent 5: Equity Deep-Dive (only in Offer Mode)
 
 ### Agent 1: Sector Thesis + Competitive Landscape
 
+**Data sources & search strategy:**
+- WebSearch: `"[sector] market size TAM 2025 2026"`, `"[sector] industry report Gartner OR Forrester OR McKinsey"`
+- WebSearch: `"[sector] startup funding 2024 2025 landscape"`, `"[sector] competitive landscape map"`
+- WebFetch: Relevant industry reports (Grand View Research, Markets and Markets, CB Insights sector pages)
+- WebSearch: `"[competitor names] vs [company]"` for head-to-head comparisons
+- WebFetch: `https://www.cbinsights.com/research/` for sector market maps if available
+
 Research and produce:
 - **Market size**: TAM with source, growth rate (CAGR)
 - **Macro trends**: What tailwinds/headwinds affect this sector?
@@ -70,6 +77,16 @@ companies_analyzed: [Company A, Company B]
 
 ### Agent 2: Company Traction + Product
 
+**Data sources & search strategy:**
+- WebSearch: `"[company] ARR revenue 2024 2025"`, `"[company] customers"`, `"[company] growth"`
+- WebSearch: `"[company] product review"`, `"[company] vs [competitor]"`
+- WebFetch: `https://www.g2.com/products/[company]/reviews` for G2 reviews and scores
+- WebFetch: `https://www.capterra.com/p/[id]/[company]/` for Capterra reviews
+- WebFetch: `https://www.producthunt.com/products/[company]` for PH launch data
+- WebSearch: `"[company] changelog OR product updates OR launch"` for feature velocity
+- WebFetch: Company blog/changelog page directly for recent product releases
+- WebSearch: `site:techcrunch.com OR site:bloomberg.com "[company]"` for press coverage of milestones
+
 Search for:
 - **Revenue signals**: ARR, revenue growth rate, any press mentions of revenue milestones
 - **Customer traction**: Customer count, logo quality (Fortune 500? startups?), NDR hints
@@ -83,6 +100,18 @@ For each data point, note the **source** and **confidence level** (High/Medium/L
 
 ### Agent 3: Team + Employee Growth + Culture
 
+**Data sources & search strategy:**
+- WebSearch: `"[company] founders background"`, `"[company] CEO"`, `"[company] leadership team"`
+- WebFetch: `https://www.linkedin.com/company/[company]/` for employee count (often visible without login)
+- WebSearch: `"[company] LinkedIn employees"` OR `site:linkedin.com "[company]" employees` for headcount estimates
+- WebSearch: `"[company] hiring OR layoffs 2025 2026"` for growth/contraction signals
+- WebFetch: `https://www.glassdoor.com/Reviews/[company]-Reviews` for Glassdoor ratings
+- WebSearch: `"[company] glassdoor rating"` as fallback
+- WebSearch: `site:blind.com "[company]"` OR `"[company] teamblind"` for anonymous employee sentiment
+- WebSearch: `"[company] board of directors"`, `"[company] board member"` for board composition
+- WebFetch: Company about/team page for exec bios
+- WebSearch: `"[company] engineering blog"`, `"[company] open source github"` for culture signals
+
 Search for:
 - **Founders**: Backgrounds, repeat founders?, previous exits, domain expertise
 - **Key exec hires**: Has a CFO been hired (IPO signal)? CRO (revenue scaling)? VP Eng from a top company?
@@ -92,6 +121,18 @@ Search for:
 - **Culture signals**: Engineering blog? Open-source contributions? Conference talks? Employer awards?
 
 ### Agent 4: Funding + Financials + Investor Quality
+
+**Data sources & search strategy:**
+- WebSearch: `"[company] funding rounds crunchbase"`, `"[company] series [A/B/C] funding"`
+- WebFetch: `https://www.crunchbase.com/organization/[company]` for funding history (may require parsing)
+- WebSearch: `"[company] valuation 2024 2025"`, `"[company] raised"` for recent rounds
+- WebSearch: `site:pitchbook.com "[company]"` for PitchBook data (limited without subscription)
+- WebSearch: `"[company] investor"`, `"[company] backed by"` for investor identification
+- WebFetch: `https://tracxn.com/d/companies/[company]` for funding timeline (limited free data)
+- WebSearch: `"[company] revenue profitability burn rate"` for financial health signals
+- WebSearch: `"[company] secondary shares"`, `"[company] forge global OR equityzen"` for secondary market data
+- WebSearch: `"[company] layoffs"`, `"[company] hiring freeze"` for burn rate concerns
+- Reference: `references/investor-tier-list.md` for VC tier classification
 
 Search for:
 - **Complete funding history**: Every round with date, amount, valuation (if known), and lead investor
@@ -107,6 +148,16 @@ Search for:
 - **Path to profitability**: Any press mentions of profitability, positive unit economics?
 
 ### Agent 5: Equity Deep-Dive (Offer Mode Only)
+
+**Data sources & search strategy:**
+- Reference: `references/dilution-guide.md` for dilution percentages, preference structures, payout math
+- Reference: `references/valuation-benchmarks.md` for exit multiples and comparable transactions
+- WebSearch: `"[sector] startup acquisition 2024 2025 exit"`, `"[sector] IPO 2024 2025"` for comparable exits
+- WebSearch: `"[company] secondary market"`, `"[company] shares forge equityzen carta"` for secondary pricing
+- WebSearch: `"[company] IPO plans"`, `"[company] CFO hire"` for liquidity timeline signals
+- WebSearch: `"[sector] revenue multiple exit valuation"` for sector-specific multiples
+- WebSearch: `"[company] liquidation preference"`, `"[company] term sheet"` (rarely public, but sometimes in SEC filings or press)
+- Calculation: Use formulas from `references/dilution-guide.md` and optionally run `scripts/equity-calculator.ts`
 
 Using the offer details provided + data from other agents:
 - **Dilution modeling**: Estimate ownership after 1-2 more funding rounds using standard dilution percentages from `references/dilution-guide.md`
