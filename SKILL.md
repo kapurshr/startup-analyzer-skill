@@ -27,13 +27,51 @@ Runs the full pipeline for each company (sharing sector cache if same sector). P
 
 ## Step 1: Check Sector Cache
 
-Before doing anything, check `references/sectors/` for a cached sector thesis:
+Before doing anything, check for existing sector research in two places:
+
+### 1a. Check Claude Memory
+
+Check if a sector thesis has been saved to Claude's memory system (`~/.claude/projects/*/memory/`). Look for memory files with names like `sector_[sector-slug].md`. Memory-based sector research persists across conversations and doesn't expire like file-based caches.
+
+### 1b. Check File Cache
+
+Check `references/sectors/[sector-slug].md` in this skill's repo directory.
+
+### Resolution Order
 
 1. Identify the company's sector (e.g., "enterprise-ai-agents", "fintech-lending", "healthtech-clinical-ai")
-2. Look for `references/sectors/[sector-slug].md`
-3. If it exists and `last_updated` is within 90 days, load it — skip Agent 1
+2. Check memory for a sector thesis → if found and still relevant, load it and skip Agent 1
+3. If not in memory, check `references/sectors/[sector-slug].md` → if exists and `last_updated` is within 90 days, load it and skip Agent 1
 4. If the target company is NOT in the cached `companies_analyzed` list, still use the cached thesis but dispatch Agent 1 as a lightweight addendum to add the new company's competitive context
-5. If no cache or >90 days old, dispatch Agent 1 in full
+5. If no cache anywhere or >90 days old, dispatch Agent 1 in full
+
+### Saving Sector Research
+
+After Agent 1 completes (or after the full analysis is done):
+
+1. **Always** save to `references/sectors/[sector-slug].md` in this skill's repo (file cache)
+2. **Also** save a memory file to Claude's memory system so it persists across conversations:
+   - File: `~/.claude/projects/*/memory/sector_[sector-slug].md`
+   - Format:
+     ```markdown
+     ---
+     name: sector-[sector-slug]
+     description: Sector thesis for [Sector Name] — TAM, competitive landscape, market structure, key players
+     type: reference
+     ---
+
+     [Full sector thesis content]
+
+     **Last Updated:** [YYYY-MM-DD]
+     **Companies Analyzed:** [Company A, Company B, ...]
+     ```
+   - Update `MEMORY.md` index with a pointer to the new sector file
+3. When a new company in the same sector is analyzed, **update both** the file cache and the memory file — append the new company to `companies_analyzed` and add any new competitive context
+
+This dual-storage approach means:
+- **File cache** (`references/sectors/`) works within a single conversation and is committed to the repo
+- **Memory** works across conversations — even in a fresh session, Claude will have the sector research available
+- The user never has to re-research a sector they've already analyzed
 
 The user can force a refresh by saying "re-analyze the sector."
 
