@@ -65,15 +65,17 @@ Give it a company name + your offer details. You get everything above plus:
 - Liquidation preference impact analysis
 - "Questions to Ask Your Recruiter" checklist
 
-## Sector Caching — It Remembers
+## Sector Caching — It Remembers (Privately)
 
 The skill builds a library over time. First time you analyze an enterprise AI company? It researches the full sector. Second time? It loads the cached thesis and skips straight to the company analysis. Saves ~2 minutes per run.
 
-**Dual-layer caching:**
-- **File cache** (`references/sectors/`) — saved in the repo, committed with git
-- **Claude memory** — persists across conversations. Start a fresh session tomorrow and it still knows the enterprise AI landscape from yesterday's research
+**Dual-layer caching with privacy boundaries:**
+- **File cache** (`references/sectors/`) — stays local, **gitignored**, never pushed to GitHub. Contains full competitive details and which companies you've researched.
+- **Claude memory** — persists across conversations, contains **generic sector data only** (TAM, trends, market structure). Never reveals which specific companies you were analyzing.
 
 Resolution: memory first → file cache → fresh research. Both updated after every analysis.
+
+Nobody looking at your GitHub repo or Claude memory can tell which startups you've been evaluating. Your research targets stay private.
 
 Force refresh anytime with "re-analyze the sector."
 

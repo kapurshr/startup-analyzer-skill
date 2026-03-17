@@ -49,9 +49,9 @@ Check `references/sectors/[sector-slug].md` in this skill's repo directory.
 
 After Agent 1 completes (or after the full analysis is done):
 
-1. **Always** save to `references/sectors/[sector-slug].md` in this skill's repo (file cache). This file CAN include the `companies_analyzed` list and specific competitor details since it lives in the skill repo.
+1. **Always** save to `references/sectors/[sector-slug].md` in this skill's repo (local file cache). This file CAN include the `companies_analyzed` list and specific competitor details — it is gitignored and never pushed to GitHub.
 2. **Also** save a memory file to Claude's memory system so it persists across conversations:
-   - **IMPORTANT: The memory file must contain ONLY generic sector-level data** — TAM, market structure, trends, tailwinds/headwinds, and high-level competitive landscape. Do NOT include which specific company the user was analyzing, `companies_analyzed` lists, or any details that reveal the user's research targets. Memory is visible across all conversations and should not leak what companies the user is evaluating.
+   - **PRIVACY RULE: The memory file must contain ONLY generic sector-level data** — TAM, market structure, trends, tailwinds/headwinds, and high-level competitive landscape. Do NOT include which specific company the user was analyzing, `companies_analyzed` lists, or any details that reveal the user's research targets. Memory is visible across all conversations and should not leak what companies the user is evaluating.
    - File: `~/.claude/projects/*/memory/sector_[sector-slug].md`
    - Format:
      ```markdown
@@ -61,17 +61,17 @@ After Agent 1 completes (or after the full analysis is done):
      type: reference
      ---
 
-     [Full sector thesis content]
+     [Generic sector thesis: TAM, structure, trends, tailwinds, headwinds, high-level competitive tiers]
 
      **Last Updated:** [YYYY-MM-DD]
-     **Companies Analyzed:** [Company A, Company B, ...]
      ```
    - Update `MEMORY.md` index with a pointer to the new sector file
-3. When a new company in the same sector is analyzed, **update both** the file cache and the memory file — append the new company to `companies_analyzed` and add any new competitive context
+3. When a new company in the same sector is analyzed, **update the file cache** (append to `companies_analyzed` and add competitive context). The memory file stays generic — only update it if sector-level data has changed (e.g., new TAM estimates, major M&A).
 
-This dual-storage approach means:
-- **File cache** (`references/sectors/`) works within a single conversation and is committed to the repo
-- **Memory** works across conversations — even in a fresh session, Claude will have the sector research available
+**Privacy architecture:**
+- **File cache** (`references/sectors/`) — local only, gitignored, CAN contain company-specific research and `companies_analyzed`
+- **Memory** — persists across conversations, visible broadly, must be **generic sector data only**
+- **GitHub** — never sees sector caches or which companies you researched
 - The user never has to re-research a sector they've already analyzed
 
 The user can force a refresh by saying "re-analyze the sector."
