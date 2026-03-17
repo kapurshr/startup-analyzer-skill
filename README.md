@@ -65,27 +65,44 @@ Give it a company name + your offer details. You get everything above plus:
 - Liquidation preference impact analysis
 - "Questions to Ask Your Recruiter" checklist
 
-## Sector Caching
+## Sector Caching — It Remembers
 
-The skill builds a library over time. First time you analyze an enterprise AI company? It researches the full sector. Second time? It loads the cached thesis and skips straight to the company analysis. Saves ~2 minutes per analysis.
+The skill builds a library over time. First time you analyze an enterprise AI company? It researches the full sector. Second time? It loads the cached thesis and skips straight to the company analysis. Saves ~2 minutes per run.
 
-Cached theses live in `references/sectors/` and expire after 90 days. Force refresh with "re-analyze the sector."
+**Dual-layer caching:**
+- **File cache** (`references/sectors/`) — saved in the repo, committed with git
+- **Claude memory** — persists across conversations. Start a fresh session tomorrow and it still knows the enterprise AI landscape from yesterday's research
+
+Resolution: memory first → file cache → fresh research. Both updated after every analysis.
+
+Force refresh anytime with "re-analyze the sector."
 
 ## Agent Architecture
 
 ```
 "Analyze [Company]"
   │
-  ├─→ Check sector cache
+  ├─→ Check Claude memory for sector thesis
+  ├─→ Check references/sectors/ file cache
   │
-  ├─→ Agent 1: Sector Thesis (skip if cached)
+  ├─→ Agent 1: Sector Thesis (skip if cached in memory or file)
+  │   Sources: Gartner, Forrester, CB Insights, market reports
+  │
   ├─→ Agent 2: Traction + Product
+  │   Sources: G2, Capterra, Product Hunt, TechCrunch, company blog
+  │
   ├─→ Agent 3: Team + Culture
+  │   Sources: LinkedIn headcount, Glassdoor, Blind, company team page
+  │
   ├─→ Agent 4: Funding + Financials
+  │   Sources: Crunchbase, PitchBook, press, investor-tier-list.md
+  │
   └─→ Agent 5: Equity Deep-Dive (offer mode only)
-         │
-         ▼
+  │   Sources: dilution-guide.md, valuation-benchmarks.md, exit comps
+  │
+  ▼
   Score → Scorecard → Memo → Save
+  → Cache sector to memory + file
 ```
 
 ## What You Get
