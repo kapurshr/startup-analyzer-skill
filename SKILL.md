@@ -49,8 +49,9 @@ Check `references/sectors/[sector-slug].md` in this skill's repo directory.
 
 After Agent 1 completes (or after the full analysis is done):
 
-1. **Always** save to `references/sectors/[sector-slug].md` in this skill's repo (file cache)
+1. **Always** save to `references/sectors/[sector-slug].md` in this skill's repo (file cache). This file CAN include the `companies_analyzed` list and specific competitor details since it lives in the skill repo.
 2. **Also** save a memory file to Claude's memory system so it persists across conversations:
+   - **IMPORTANT: The memory file must contain ONLY generic sector-level data** — TAM, market structure, trends, tailwinds/headwinds, and high-level competitive landscape. Do NOT include which specific company the user was analyzing, `companies_analyzed` lists, or any details that reveal the user's research targets. Memory is visible across all conversations and should not leak what companies the user is evaluating.
    - File: `~/.claude/projects/*/memory/sector_[sector-slug].md`
    - Format:
      ```markdown
